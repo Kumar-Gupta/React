@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from 'react'
 import {Routes,Route} from 'react-router'
+import Header from './components/Header';
 import HomePage from './pages/home';
+import AboutPage from './pages/about';
+import PageNotFound from './pages/pagenotfound';
+import CoinDetails from './pages/coin-detail';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const App = () => {
@@ -26,7 +30,6 @@ const App = () => {
         setLoading(false)
       }
     }
-
     fetchCoins()
   }, [limit])
 
@@ -49,6 +52,8 @@ const App = () => {
   // } , []);
   
   return (
+    <>
+    <Header />
     <Routes>
       <Route path='/' element={<HomePage 
       coins={coins}
@@ -61,7 +66,15 @@ const App = () => {
       loading={loading}
       error={error}
       />} />
+
+    <Route  path='/about' element={<AboutPage />} />
+
+    <Route path='*' element={<PageNotFound />} />
+
+    <Route path='/coin/:id' element={<CoinDetails />} />
+    
     </Routes>
+    </>
   )
 }
 
