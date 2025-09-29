@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
+import Spinner from '../components/Spinner';
+import CoinChart from '../components/CoinChart';
 const API_URL = import.meta.env.VITE_COIN_API_URL;
 
 const CoinDetails = () => {
@@ -14,7 +16,8 @@ const CoinDetails = () => {
                 const res = await fetch(`${API_URL}/${id}`)
                 console.log(res)
                 if(!res.ok) throw new Error('Failed to fech coin data')
-                const data =await res.json();
+                const data =await res.json();   
+                setCoin(data)
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -31,11 +34,11 @@ const CoinDetails = () => {
         <Link to='/'> Go back to Home Page </Link>
 
         <h1 className="coin-details-title">
-            {coin ? `${coin.name} (${coin.symbol})` : 'Coin Details' }
+            {coin ? `${coin.name} (${coin.symbol.toUpperCase()})` : 'Coin Details' }
         </h1>
 
-        {loading && <p>Loading...</p> }
-        { error && <div className="error">{error}</div> }
+        {loading && <Spinner /> }
+        {error && <div className="error">{error}</div> }
 
         {!loading && !error && (
             <>
@@ -44,8 +47,50 @@ const CoinDetails = () => {
                 <p>{coin.description.en.split('. ')[0] + '.'}</p>
 
                 <div className="coin-details-info">
-                    <h3>Rank: {coin.market_cap.rank}</h3>
-                    <h3>Current Price: {coin.market_data.current_price.inr}</h3>
+                    <h3>Rank: {coin.market_cap_rank}</h3>
+                    <h3>Current Price: {coin.market_data.current_price.inr.toLocaleString()}</h3>
+                    <h4>Market Cap: {coin.market_data.market_cap.inr.toLocaleString()}</h4>
+                    <h4>24h High: {coin.market_data.high_24h.inr.toLocaleString()}</h4>
+                    <h4>24h Low: {coin.market_data.low_24h.inr.toLocaleString()}</h4>
+                    <h4>24h Price Change: {coin.market_data.price_change_24h.toFixed(2)}{' '}
+                        ({coin.market_data.price_change_percentage_24h.toFixed(2)}%)
+                    </h4>
+                    <h4>Circulating Supply: {coin.market_data.circulating_supply.toLocaleString()}</h4>
+                    <h4>Total Supply: {coin.market_data.total_supply?.toLocaleString() || 'N/A'}</h4>
+                    <h4>All-Time High: {coin.market_data.ath.inr.toLocaleString()} on {new Date(coin.market_data.ath_date.inr).toLocaleDateString()}</h4>
+                    <h4>All-Time Low: {coin.market_data.atl.inr.toLocaleString()} on {new Date(coin.market_data.atl_date.inr).toLocaleDateString()}</h4>
+                    <h4>Last Updated: {new Date(coin.last_updated).toLocaleDateString()}</h4>
+                </div>
+
+                <CoinChart coinId={coin.id} />
+
+                <div className="coin-details-links">
+                    {coin.links.homepage[0] && (
+                        <p>
+                            🌎{' '}
+                            <a href={coin.links.homepage[0]}
+                            target='_blank'
+                            rel='noopener noreferer'
+                            >
+                                Website
+                            </a>
+                        </p>    
+                    )}
+                    {coin.links.blockchain_site[0] && (
+                        <p>
+                            🧩{' '}
+                            <a href={coin.links.blockchain_site[0]} 
+                            target="_blank" 
+                            rel="noopener noreferrer">
+                                Blockchain Explorer
+                            </a>
+                        </p>
+                    )}
+                    {coin.categories.length > 0 && (
+                        <p>Categories: {coin.categories.join(', ')}</p>
+                    )}
+
+                    {!loading && !error && !coin && <p>No data Found!</p>}
                 </div>
             </>
         )}
