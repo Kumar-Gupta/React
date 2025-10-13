@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import type { Project } from '~/types'
 
-const ProductCard = ({project}: {project: Project}) => {
+const ProjectCard = ({project}: {project: Project}) => {
   return (
     <Link className='block transform transition duration-300 hover:scale-[1.02]' to={`/projects/${project.id}`}>
         <div className="bg-gray-700 border border-gray-600 rounded-lg shadow-sm transition hover:shadow-md">
@@ -22,4 +22,4 @@ const ProductCard = ({project}: {project: Project}) => {
   )
 }
 
-export default ProductCard
+export default ProjectCard

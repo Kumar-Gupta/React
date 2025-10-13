@@ -1,8 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router'
 
+type HeroProps = {
+  name: string;
+  text: string;
+}
 
-function Hero({name= '[NAME]', text='I build friendly web experiences and help others become confident, modern developers.'}) {
+const Hero:React.FC<HeroProps> = ({name= '[NAME]', text='I build friendly web experiences and help others become confident, modern developers.'}) => {
   return (
     <header className="text-center py-20 px-4 bg-gray-900 text-white transition-colors duration-300">
         <h2 className="text-4xl font-bold mb-4">
