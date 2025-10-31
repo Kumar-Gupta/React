@@ -1,6 +1,8 @@
 import PostCard from "~/components/PostCard";
 import type { Route } from "./+types";
 import type { PostMeta } from "~/types";
+import Pagination from "~/components/Pagination";
+import { useState } from "react";
 
 
 export async function loader({request}:Route.LoaderArgs): Promise<{posts : PostMeta[]}> {
@@ -17,15 +19,27 @@ export async function loader({request}:Route.LoaderArgs): Promise<{posts : PostM
 }
 
 const BlogPage = ({loaderData}: Route.ComponentProps) => {
-
+  const [currentPage, setCurrentPage] = useState(1)
   const {posts} = loaderData;
+
+  const totalPosts = posts.length;
+  const postPerPage = 2;
+
+  const totalPages = Math.ceil(totalPosts/ postPerPage);
+  const indexOfLast = currentPage * postPerPage;
+  const indexofFirst = indexOfLast - postPerPage;
+  const currentPosts = posts.slice(indexofFirst, indexOfLast)
+  console.log(totalPages,indexOfLast,indexofFirst, currentPosts)
 
   return (
     <div className="max-w-3xl mx-auto mt-10 py-6 px-6 bg-gray-900">
         <h2 className='text-3xl font-bold text-white mb-4'>🗒️ Blog</h2>
-        {posts.map((post)=>(
+        {currentPosts.map((post)=>(
           <PostCard key={post.slug} post={post} />
         ))}
+        {totalPages > 1 && (
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={(page)=>setCurrentPage(page)} />
+        )}
     </div>
   )
 }
