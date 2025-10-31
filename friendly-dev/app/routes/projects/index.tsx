@@ -24,7 +24,7 @@ const ProjectsPage = ({loaderData}: Route.ComponentProps) => {
   const {projects} = loaderData as {projects: Project[]};
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const projectsPerPage = 3;
+  const projectsPerPage = 6;
 
   // Get unique categories
   const categories = ['All', ...new Set(projects.map((p) => p.category))];

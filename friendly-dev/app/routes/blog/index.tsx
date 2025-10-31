@@ -3,6 +3,7 @@ import type { Route } from "./+types";
 import type { PostMeta } from "~/types";
 import Pagination from "~/components/Pagination";
 import { useState } from "react";
+import PostFilter from "~/components/PostFilter";
 
 
 export async function loader({request}:Route.LoaderArgs): Promise<{posts : PostMeta[]}> {
@@ -20,23 +21,44 @@ export async function loader({request}:Route.LoaderArgs): Promise<{posts : PostM
 
 const BlogPage = ({loaderData}: Route.ComponentProps) => {
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState('')
   const {posts} = loaderData;
 
-  const totalPosts = posts.length;
-  const postPerPage = 2;
-
+  const postPerPage = 4;
+  
+  const filteredPosts = posts.filter((post)=>
+    {
+      const query = searchQuery.toLowerCase();
+      return (post.title.toLowerCase().includes(query) || post.excerpt.toLowerCase().includes(query))
+    }
+  )
+  const totalPosts = filteredPosts.length;
   const totalPages = Math.ceil(totalPosts/ postPerPage);
   const indexOfLast = currentPage * postPerPage;
   const indexofFirst = indexOfLast - postPerPage;
-  const currentPosts = posts.slice(indexofFirst, indexOfLast)
-  console.log(totalPages,indexOfLast,indexofFirst, currentPosts)
+  const currentPosts = filteredPosts.slice(indexofFirst, indexOfLast)
 
   return (
     <div className="max-w-3xl mx-auto mt-10 py-6 px-6 bg-gray-900">
         <h2 className='text-3xl font-bold text-white mb-4'>🗒️ Blog</h2>
-        {currentPosts.map((post)=>(
-          <PostCard key={post.slug} post={post} />
-        ))}
+
+        <PostFilter searchQuery={ searchQuery } onSearchChange={(query) => {
+          setSearchQuery(query)
+          setCurrentPage(1)
+        }} />
+
+        <div className="space-y-8">
+          {currentPosts.length === 0 ? (
+            <p className="text-gray-400 text-center">
+              No posts found
+            </p>
+          ) : 
+            currentPosts.map((post)=>(
+              <PostCard key={post.slug} post={post} />
+            ))
+          }
+        </div>
+        
         {totalPages > 1 && (
           <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={(page)=>setCurrentPage(page)} />
         )}
