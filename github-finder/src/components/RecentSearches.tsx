@@ -22,7 +22,7 @@ const RecentSearches = ({ users, onSelect } : RecentSearchesProps ) => {
                             onClick={() => onSelect(user)}
                             onMouseEnter={()=> {
                                 queryClient.prefetchQuery({
-                                    queryKey:['uses', user],
+                                    queryKey:['users', user],
                                     queryFn: () => fetchGithubUser(user)
                                 })
                             }}
