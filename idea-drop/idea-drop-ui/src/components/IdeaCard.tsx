@@ -12,14 +12,14 @@ const IdeaCard = ({idea, button = true} : {idea: Idea, button?: boolean}) => {
   return (
     <div 
     className="border border-gray-300 p-4 rounded shadow bg-white flex flex-col justify-between"
-    key={idea.id}
+    key={idea._id}
     >
         <h3 className="text-lg font-bold text-gray-900">{idea.title}</h3>
         <p className="text-gray-600 mb-2">{idea.summary}</p>
         <a href="#" className=""> </a>
         <Link 
         to='/ideas/$ideaId' 
-        params={{ideaId: idea.id.toString()}}
+        params={{ideaId: idea._id.toString()}}
         className={linkClasses}
         > 
         {button ? 'View Idea' : 'Read more ... '}
