@@ -2,6 +2,7 @@ import express from "express";
 import Idea from "../models/Idea.js";
 import mongoose from "mongoose";
 import { isArray } from "chart.js/helpers";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -31,7 +32,7 @@ router.get('/', async (req, res, next) =>{
 //@access           Public
 router.get('/:id', async (req, res, next) =>{
     try{
-        const { id } = req.params
+        const { id } = req.params;
         
         if(!mongoose.Types.ObjectId.isValid(id)){
             res.status(404);
@@ -58,7 +59,7 @@ router.get('/:id', async (req, res, next) =>{
 router.post('/', async (req, res, next) => {
     
     try {
-        const { title, summary, description, tags} = req.body;
+        const { title, summary, description, tags} = req.body || {};
 
         if(!title?.trim() || !summary?.trim() || !description?.trim()){
             res.status(400);
@@ -91,7 +92,7 @@ router.post('/', async (req, res, next) => {
 //@rotue            Delete /api/ideas/:id
 //@description      delete single idea
 //@access           Public
-router.delete('/:id', async (req, res, next) =>{
+router.delete('/:id', protect, async (req, res, next) =>{
     try{
         const { id } = req.params;
         
@@ -116,7 +117,7 @@ router.delete('/:id', async (req, res, next) =>{
 //@rotue            PUT /api/ideas/:id
 //@description      Update single idea
 //@access           Public
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', protect,  async (req, res, next) => {
    try {
     const { id } = req.params;
 
@@ -125,7 +126,7 @@ router.put('/:id', async (req, res, next) => {
         throw new Error('Idea not found')
     }
 
-    const { title, summary, description, tags} = req.body;
+    const { title, summary, description, tags} = req.body || {} ;
 
     if(!title?.trim() || !summary?.trim() || !description?.trim()){
         res.status(400);
